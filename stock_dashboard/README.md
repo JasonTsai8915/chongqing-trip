@@ -25,7 +25,26 @@
 
 另外附上：乖離過大／RSI 超買警示、價量關係、KD 交叉，以及停損參考價（20MA 與近 10 日低點中，低於現價的較高者）。
 
-## 安裝與執行
+## 下載執行檔（免安裝 Python）
+
+1. 到 GitHub repo 的 **Actions** 頁 → 點選最新一次 **Build StockDashboard executable**。
+2. 在頁面最下方 **Artifacts** 下載 `StockDashboard-windows`（或 `StockDashboard-macos`），解壓縮。
+3. 雙擊 `StockDashboard.exe`，會出現一個黑色視窗，並自動在瀏覽器開啟看板（http://localhost:8501）。
+4. 要結束程式時，關閉黑色視窗即可。
+
+> 第一次執行約需 10～20 秒解壓。Windows SmartScreen 若跳出「Windows 已保護您的電腦」，點「其他資訊」→「仍要執行」。
+
+### 自行打包
+
+```bash
+cd stock_dashboard
+pip install -r requirements.txt pyinstaller
+pyinstaller --noconfirm stock_dashboard.spec   # 產出 dist/StockDashboard(.exe)
+```
+
+PyInstaller 只能打包目前作業系統的版本：要 Windows 版就在 Windows 上執行，或交給 GitHub Actions 打包。
+
+## 用 Python 執行（開發用）
 
 ```bash
 cd stock_dashboard

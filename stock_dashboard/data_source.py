@@ -72,6 +72,7 @@ def daily_prices(code: str, market: str = "", days: int = 400) -> pd.DataFrame:
 
 def _yahoo_prices(code: str, market: str) -> pd.DataFrame:
     suffixes = [".TWO", ".TW"] if market == "tpex" else [".TW", ".TWO"]
+    offline = False
     for suf in suffixes:
         try:
             r = requests.get(
@@ -91,8 +92,12 @@ def _yahoo_prices(code: str, market: str) -> pd.DataFrame:
             df["volume"] = df["volume"] / 1000
             if len(df) > 30:
                 return df
+        except requests.exceptions.ConnectionError:
+            offline = True
         except Exception:
             continue
+    if offline:
+        raise DataError("無法連線到資料來源（FinMind／Yahoo），請檢查網路或防火牆設定")
     raise DataError(f"查無 {code} 的股價資料，請確認股號是否正確")
 
 

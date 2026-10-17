@@ -1,0 +1,41 @@
+name: Build StockDashboard executable
+
+on:
+  push:
+    paths:
+      - "stock_dashboard/**"
+      - ".github/workflows/build-stock-dashboard.yml"
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            artifact: StockDashboard-windows
+          - os: macos-latest
+            artifact: StockDashboard-macos
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: stock_dashboard
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pyinstaller
+      - name: Run tests
+        run: python -m pytest -q tests
+      - name: Build executable
+        run: pyinstaller --noconfirm --clean stock_dashboard.spec
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: stock_dashboard/dist/
+          retention-days: 30
