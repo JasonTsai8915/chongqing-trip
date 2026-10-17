@@ -34,8 +34,35 @@ jobs:
         run: python -m pytest -q tests
       - name: Build executable
         run: pyinstaller --noconfirm --clean stock_dashboard.spec
+      - name: Zip (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: Compress-Archive -Path dist/StockDashboard.exe -DestinationPath ${{ matrix.artifact }}.zip
+      - name: Zip (macOS)
+        if: runner.os == 'macOS'
+        run: cd dist && zip ../${{ matrix.artifact }}.zip StockDashboard
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact }}
-          path: stock_dashboard/dist/
+          path: stock_dashboard/${{ matrix.artifact }}.zip
           retention-days: 30
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: out
+          merge-multiple: true
+      - name: Publish release with download links
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: stock-dashboard-latest
+        run: |
+          gh release delete "$TAG" --repo "$GITHUB_REPOSITORY" --cleanup-tag -y || true
+          gh release create "$TAG" out/*.zip --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --title "短線篩選看板 執行檔" \
+            --notes "下載 StockDashboard-windows.zip，解壓縮後雙擊 StockDashboard.exe，瀏覽器會自動開啟看板。（build ${GITHUB_SHA::7}）"

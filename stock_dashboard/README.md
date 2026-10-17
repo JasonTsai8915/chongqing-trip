@@ -27,8 +27,9 @@
 
 ## 下載執行檔（免安裝 Python）
 
-1. 到 GitHub repo 的 **Actions** 頁 → 點選最新一次 **Build StockDashboard executable**。
-2. 在頁面最下方 **Artifacts** 下載 `StockDashboard-windows`（或 `StockDashboard-macos`），解壓縮。
+1. 下載 Windows 版：https://github.com/JasonTsai8915/chongqing-trip/releases/download/stock-dashboard-latest/StockDashboard-windows.zip
+   （macOS 版：同一位址改為 `StockDashboard-macos.zip`；所有版本見 repo 的 **Releases** 頁）
+2. 解壓縮。
 3. 雙擊 `StockDashboard.exe`，會出現一個黑色視窗，並自動在瀏覽器開啟看板（http://localhost:8501）。
 4. 要結束程式時，關閉黑色視窗即可。
 
